@@ -5,9 +5,6 @@ import os
 import operator
 import sys
 import argparse
-from Crypto.Cipher import AES
-from multiprocessing import Pool
-import cryptoLib as CL
 import rsaLib as RL
 import struct
 from Crypto.Util import number
@@ -16,25 +13,19 @@ from Crypto.Hash import SHA256
 
 
 def rsaSign(h,n,d):
-
-    m = int(h, 16)
-    sig = RL.powMod(m,d,n)
+    h = int(h, 16)
+    sig = RL.powMod(h,d,n)
     return str(sig)
 
-def rsaVal(m,s,n,e):
+def rsaVal(m,sig,n,e):
 
-    val = str(s**e)
-    print(val)
-    mess = str(int(m, 16))
-    h = SHA256.new()
-    h.update(mess)
-    h = h.hexdigest()
-    h = int(h, 16)
-    print(h % n)
+    m = int(m, 16)
+    ver = RL.powMod(sig,e,n)
 
-
-
-
+    if m == ver:
+        return True
+    else:
+        return False
 
 
 def main():
