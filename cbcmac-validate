@@ -1,2 +1,2 @@
 #!/bin/bash
-python macLib.py cbcmac-validate $@
+python3 macLib.py cbcmac-validate $@

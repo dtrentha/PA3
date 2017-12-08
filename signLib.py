@@ -50,8 +50,9 @@ def main():
             d = int(lines[2])
 
         if args.m != None:
-            mF = open(args.m, 'rb')
+            mF = open(args.m, 'r')
             buf = mF.read()
+            buf = buf.encode('utf-8')
             h = SHA256.new()
             h.update(buf)
             h = h.hexdigest()
@@ -76,6 +77,7 @@ def main():
         if args.m != None:
             mF = open(args.m, 'r')
             buf = mF.read()
+            buf = buf.encode('utf-8')
             h = SHA256.new()
             h.update(buf)
             h = h.hexdigest()
@@ -87,8 +89,8 @@ def main():
             sig = int(line)
 
 
-        print(rsaVal(h,sig,n,e))
-        return
+        result = rsaVal(h,sig,n,e)
+        return result
 
 
 if __name__ == '__main__':

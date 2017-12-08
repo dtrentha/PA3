@@ -17,18 +17,18 @@ def dehexify(hext):
 
 #XOR two raw byte strings
 def xorify(block, iv):
-    result = "%x" % (int(binascii.hexlify(block), 16) ^ int(binascii.hexlify(iv),16))
-    result = format(result,'0>32')
-    result = binascii.unhexlify(result.strip())
-    print(result)
-    return result
+    #result = "%x" % (int(binascii.hexlify(block), 16) ^ int(binascii.hexlify(iv),16))
+    #result = format(result,'0>32')
+    #result = binascii.unhexlify(result.strip())
+    #print(result)
+    #return result
     #int_block = int.from_bytes(block, byteorder = 'big', signed = False)
     #int_iv = int.from_bytes(iv, byteorder= 'big', signed = False)
     #x = int_block ^ int_iv
     #return x.to_bytes(len(block), byteorder= 'big', signed = False)
 
     #This finally worked!!!!
-    #return bytes(map(operator.xor, int(block), int(iv)))
+    return bytes(map(operator.xor, block, iv))
 
 #Generate an IV in raw bytes
 def genIV():
@@ -58,7 +58,8 @@ def padify(blocks):
             tot = 16 - len(i)
             need = 1
     if need == 0:
-        pad = chr(16) * 16
+        pad = 16
+        pad = pad.to_bytes(1,byteorder= 'big', signed = False) * 16
         blocks.append(pad)
         return blocks
     elif need == 1:
@@ -90,7 +91,7 @@ def encrypt(key, raw):
         raise ValueError('input text cannot be null or empty set')
     cipher = AES.AESCipher(key[:32], AES.MODE_ECB)
     ciphertext = cipher.encrypt(raw)
-    return  binascii.hexlify(bytearray(ciphertext))#.decode('utf-8')
+    return  binascii.hexlify(bytearray(ciphertext)).decode('utf-8')
 
 def decrypt(key, enc):
     if (enc is None) or (len(enc) == 0):
@@ -112,6 +113,7 @@ def cbc_enc(message,iv,key):
         ciblocks.append(ciphertext)
         ciphertext = binascii.unhexlify(ciphertext)
         newiv = ciphertext
+
     return ciblocks
 
 def cbc_dec(ciblocks,key):

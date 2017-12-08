@@ -1,2 +1,2 @@
 #!/bin/bash
-python signLib.py rsa-validate $@
+python3 signLib.py rsa-validate $@

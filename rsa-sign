@@ -1,2 +1,2 @@
 #!/bin/bash
-python signLib.py rsa-sign $@
+python3 signLib.py rsa-sign $@

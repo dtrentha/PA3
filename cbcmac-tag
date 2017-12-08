@@ -1,2 +1,2 @@
 #!/bin/bash
-python macLib.py cbcmac-tag $@
+python3 macLib.py cbcmac-tag $@

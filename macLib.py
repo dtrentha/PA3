@@ -15,8 +15,15 @@ def mac_tag(message, length, key):
     ciblocks = []
     blocks = CL.blockify(message)
     blocks = CL.padify(blocks)
+    newiv = length
     for i in blocks:
-        print(len(i))
+        ciblock = CL.xorify(i,newiv)
+        ciphertext = CL.encrypt(key,ciblock)
+        ciblocks.append(ciphertext)
+        ciphertext = binascii.unhexlify(ciphertext)
+        newiv = ciphertext
+
+    return ciblocks[-1]
 
 
 def main():
@@ -39,11 +46,9 @@ def main():
 
     if args.m != None:
         mF = open(args.m, 'rb')
-        message = mF.read()
-        message = bytes(message).encode('utf-8')
-        # need to fix this for VM message = bytes('', encoding = 'utf-8')
-        #for line in mF:
-        #    message += line
+        message = bytes('', encoding = 'utf-8')
+        for line in mF:
+            message += line
 
 
     if mode == "cbcmac-tag":
@@ -51,9 +56,21 @@ def main():
         iv = format(len(message), '016b')
         iv = CL.encrypt(key,iv)
         iv = binascii.unhexlify(iv)
-        blocks = mac_tag(message,iv,key)
-        for i in blocks:
-            print(i)
+        tag = mac_tag(message,iv,key)
+        tF.write("%s\n" % tag)
+
+    if mode == "cbcmac-validate":
+        tF = open(args.t, 'r')
+        tag = tF.readline()
+        tag = tag.rstrip('\n')
+        iv = format(len(message), '016b')
+        iv = CL.encrypt(key,iv)
+        iv = binascii.unhexlify(iv)
+        check_tag = mac_tag(message, iv, key)
+        if check_tag == tag:
+            return True
+        else:
+            return False
 
 if __name__ == "__main__":
 	main()
